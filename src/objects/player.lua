@@ -10,6 +10,9 @@ Player.impulse = 0
 
 -- Private
 
+local spriteBirdNormal = nil
+local spriteBirdFlapping = nil
+
 local function getBeak(player)
 	local beak = {}
 	beak.pos = {}
@@ -36,14 +39,38 @@ function Player:fly()
 end
 
 function Player:draw()
+	local beak = getBeak(self)
+	
+	local posX = 0
+	local sizeX = 0
+	
+	if (player.speed.horizontal > 0) then
+		sizeX = -(self.size.wide * .07)
+		posX = (self.pos.x + self.size.wide + beak.size.wide)
+	else
+		sizeX = self.size.wide * .07
+		posX = (self.pos.x - beak.size.wide)
+	end
+	
+	-- Sprite
+	love.graphics.setColor(255, 255, 255, 1)
+	if (spriteBirdNormal == nil) then return end
+	if (self.speed.vertical < 0) then
+		love.graphics.draw(spriteBirdFlapping, posX, self.pos.y, 0, sizeX, (self.size.tall * .07))
+	else
+		love.graphics.draw(spriteBirdNormal, posX, self.pos.y, 0, sizeX, (self.size.tall * .07))
+	end
+
+	--[[
+	-- Collision
 	-- Body
 	love.graphics.setColor(255, 0, 0, .5)
 	love.graphics.rectangle("fill", self.pos.x, self.pos.y, self.size.wide, self.size.tall, 0)
 	
 	-- Beak
-	local beak = getBeak(self)
 	love.graphics.setColor(255, 128, 0, .5)
 	love.graphics.rectangle("fill", beak.pos.x, beak.pos.y, beak.size.wide, beak.size.tall, 0)
+	]]
 end
 
 function Player:update(dt)
@@ -82,6 +109,12 @@ function Player:create()
 	player.weight = 800.0
 	player.impulse = 500.0
 	centerPlayer(player)
+	
+	-- Cargamos los sprites
+	spriteBirdNormal = love.graphics.newImage("resources/bird_normal.png")
+	spriteBirdFlapping = love.graphics.newImage("resources/bird_flapping.png")
+	print("Sprites loaded!")
+	
 	return player
 end
 

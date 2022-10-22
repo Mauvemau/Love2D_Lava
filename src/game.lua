@@ -11,9 +11,22 @@ local started
 local player
 
 function love.mousepressed(x, y, button, isTouch)
-	if(button == 1 or button == 2) then
+	if (button == 1 or button == 2) then
+		if (not started) then started = true end
 		player:fly()
 	end
+end
+
+function love.keypressed(key)
+	if (key == "space") then
+		if (not started) then started = true end
+		player:fly()
+	end
+end
+
+function love.touchpressed()
+	if (not started) then started = true end
+	player:fly()
 end
 
 -- Public
@@ -40,7 +53,9 @@ end
 
 function Game:update(dt)
 	-- Player
-	player:update(dt)
+	if(started) then
+		player:update(dt)
+	end
 	
 	-- Hud
 	Hud:update()
@@ -48,6 +63,7 @@ end
 
 function Game:init()
 	print("Initializing Game...")
+	love.graphics.setDefaultFilter("nearest")
 	love.graphics.setBackgroundColor( 255, 255, 255, 1)
 	
 	started = false
