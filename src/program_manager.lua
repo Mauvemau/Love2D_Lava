@@ -1,10 +1,10 @@
 require("src/game")
-require("src/main_menu")
+
+-- De momento el juego va a tener solo 1 pantalla, pero en caso de que mas tarde quiera agregar mas, esta este codigo.
 
 Program = {}
 
 Program.Status = {
-	MAINMENU = {id = 0, name = "Main Menu"},
 	INGAME = {id = 1, name = "Game"}
 }
 
@@ -13,27 +13,18 @@ Program.currentStatus = {}
 -- Private
 
 local function drawRespectiveStatus(status)
-	if(status.id == Program.Status.MAINMENU.id) then
-		MainMenu:draw()
-	end
 	if(status.id == Program.Status.INGAME.id) then
 		Game:draw()
 	end
 end
 
 local function updateRespectiveStatus(status)
-	if(status.id == Program.Status.MAINMENU.id) then
-		MainMenu:draw()
-	end
 	if(status.id == Program.Status.INGAME.id) then
 		Game:draw()
 	end
 end
 
 local function initRespectiveStatus(status)
-	if (status.id == Program.Status.MAINMENU.id) then
-		MainMenu:init()
-	end
 	if (status.id == Program.Status.INGAME.id) then
 		Game:init()
 	end
