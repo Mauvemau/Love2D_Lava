@@ -31,6 +31,10 @@ end
 
 -- Public
 
+function Player:fly()
+	self.speed.vertical = -self.impulse
+end
+
 function Player:draw()
 	-- Body
 	love.graphics.setColor(255, 0, 0, .5)
@@ -50,12 +54,18 @@ function Player:update(dt)
 	self.pos.y = self.pos.y + (self.speed.vertical * dt)
 	
 	if(not Collision:playerWallBottom(self)) then
-		--if(self.speed.vertical > -(self.weight * 100)) then
+		if(self.speed.vertical < self.weight) then
 			self.speed.vertical = self.speed.vertical + (self.weight * dt)
-		--end
+		end
 	else
 		local wallWidth = Game:getWallWidth()
 		self.pos.y = ((love.graphics.getHeight() * (1 - wallWidth)) - self.size.tall)
+		self.speed.vertical = 0.0
+	end
+	
+	if(Collision:playerWallTop(self)) then
+		local wallWidth = Game:getWallWidth()
+		self.pos.y = wallWidth + self.size.tall
 		self.speed.vertical = 0.0
 	end
 end
@@ -67,10 +77,10 @@ function Player:create()
 	player.pos.y = (love.graphics.getHeight() * .5)
 	player.size.wide = (love.graphics.getHeight() * .05)
 	player.size.tall = (love.graphics.getHeight() * .05)
-	player.speed.horizontal = 300.0
+	player.speed.horizontal = 350.0
 	player.speed.vertical = 0.0
-	player.weight = 600.0
-	player.impulse = 600.0
+	player.weight = 800.0
+	player.impulse = 500.0
 	centerPlayer(player)
 	return player
 end

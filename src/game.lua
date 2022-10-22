@@ -10,11 +10,17 @@ local started
 
 local player
 
-local function manageInput()
-	
+function love.mousepressed(x, y, button, isTouch)
+	if(button == 1 or button == 2) then
+		player:fly()
+	end
 end
 
 -- Public
+
+function Game:getPlayer()
+	return player
+end
 
 function Game:getWallWidth()
 	return wallWidth
@@ -33,9 +39,6 @@ function Game:draw()
 end
 
 function Game:update(dt)
-	-- Input
-	manageInput()
-	
 	-- Player
 	player:update(dt)
 	
