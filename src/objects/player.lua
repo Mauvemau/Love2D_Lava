@@ -1,3 +1,4 @@
+require("src/collision_manager")
 
 Player = {}
 
@@ -8,7 +9,16 @@ Player.speed = { horizontal = 0.0, vertical = 0.0 }
 -- Private
 
 local function getBeak(player)
-	local beak = { wide = (player.size.wide * .2), tall = (player.size.tall * .5)}
+	local beak = {}
+	beak.pos = {}
+	beak.size = { wide = (player.size.wide * .2), tall = (player.size.tall * .5) }
+	if (player.speed.horizontal > 0) then
+		beak.pos.x = (player.pos.x + player.size.wide)
+	else
+		beak.pos.x = (player.pos.x - beak.size.wide)
+	end
+	beak.pos.y = (player.pos.y + (beak.size.tall * .5))
+	
 	return beak
 end
 
@@ -27,15 +37,14 @@ function Player:draw()
 	-- Beak
 	local beak = getBeak(self)
 	love.graphics.setColor(255, 128, 0, .5)
-	if (player.speed.horizontal > 0) then
-		love.graphics.rectangle("fill", (self.pos.x + self.size.wide), (self.pos.y + (beak.tall * .5)), beak.wide, beak.tall, 0)
-	else
-		love.graphics.rectangle("fill", (self.pos.x - beak.wide), (self.pos.y + (beak.tall * .5)), beak.wide, beak.tall, 0)
-	end
+	love.graphics.rectangle("fill", beak.pos.x, beak.pos.y, beak.size.wide, beak.size.tall, 0)
 end
 
-function Player:update()
-	
+function Player:update(dt)
+	if (Collision:beakWall(getBeak(self))) then
+		player.speed.horizontal = -player.speed.horizontal
+	end
+	self.pos.x = self.pos.x + (player.speed.horizontal * dt)
 end
 
 function Player:create()
@@ -45,7 +54,7 @@ function Player:create()
 	player.pos.y = (love.graphics.getHeight() * .5)
 	player.size.wide = (love.graphics.getHeight() * .05)
 	player.size.tall = (love.graphics.getHeight() * .05)
-	player.speed.horizontal = 1.0
+	player.speed.horizontal = 300.0
 	player.speed.vertical = 0.0
 	centerPlayer(player)
 	return player

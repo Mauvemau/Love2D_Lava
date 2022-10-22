@@ -18,9 +18,9 @@ local function drawRespectiveStatus(status)
 	end
 end
 
-local function updateRespectiveStatus(status)
+local function updateRespectiveStatus(status, dt)
 	if(status.id == Program.Status.INGAME.id) then
-		Game:draw()
+		Game:update(dt)
 	end
 end
 
@@ -51,7 +51,7 @@ end
 function Program:update(dt)
 	local id = self.currentStatus.id or nil
 	if(id == nil)then return end -- Verificamos que el status del juego este seteado antes de updatear.
-	updateRespectiveStatus(self.currentStatus)
+	updateRespectiveStatus(self.currentStatus, dt)
 end
 
 function Program:init()
