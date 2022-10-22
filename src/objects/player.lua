@@ -5,6 +5,8 @@ Player = {}
 Player.pos = { x = 0, y = 0 }
 Player.size = { wide = 0, tall = 0 }
 Player.speed = { horizontal = 0.0, vertical = 0.0 }
+Player.weight = 0
+Player.impulse = 0
 
 -- Private
 
@@ -42,9 +44,20 @@ end
 
 function Player:update(dt)
 	if (Collision:beakWall(getBeak(self))) then
-		player.speed.horizontal = -player.speed.horizontal
+		self.speed.horizontal = -self.speed.horizontal
 	end
-	self.pos.x = self.pos.x + (player.speed.horizontal * dt)
+	self.pos.x = self.pos.x + (self.speed.horizontal * dt)
+	self.pos.y = self.pos.y + (self.speed.vertical * dt)
+	
+	if(not Collision:playerWallBottom(self)) then
+		--if(self.speed.vertical > -(self.weight * 100)) then
+			self.speed.vertical = self.speed.vertical + (self.weight * dt)
+		--end
+	else
+		local wallWidth = Game:getWallWidth()
+		self.pos.y = ((love.graphics.getHeight() * (1 - wallWidth)) - self.size.tall)
+		self.speed.vertical = 0.0
+	end
 end
 
 function Player:create()
@@ -56,6 +69,8 @@ function Player:create()
 	player.size.tall = (love.graphics.getHeight() * .05)
 	player.speed.horizontal = 300.0
 	player.speed.vertical = 0.0
+	player.weight = 600.0
+	player.impulse = 600.0
 	centerPlayer(player)
 	return player
 end
