@@ -76,6 +76,7 @@ end
 function Player:update(dt)
 	if (Collision:beakWall(getBeak(self))) then
 		self.speed.horizontal = -self.speed.horizontal
+		Game:updateWall()
 	end
 	self.pos.x = self.pos.x + (self.speed.horizontal * dt)
 	self.pos.y = self.pos.y + (self.speed.vertical * dt)
