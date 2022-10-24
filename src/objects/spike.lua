@@ -1,6 +1,0 @@
-
-Spike = {}
-
--- Private
-
--- Public

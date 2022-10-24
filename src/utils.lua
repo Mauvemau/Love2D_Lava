@@ -1,10 +1,16 @@
 
 Utils = {}
 
+function Utils:isEven(num)
+	return (num % 2 == 0)
+end
+
 function Utils:getUniqueInterger(min, max, existing) -- Existing debe ser una tabla
 	local num = math.random(min, max)
 	for index, value in pairs(existing) do
-		if (value == num) then self:getUniqueInterger(min, max, existing) end
+		if (existing[index] == num) then
+			num = self:getUniqueInterger(min, max, existing) 
+		end
 	end
 	return num
 end

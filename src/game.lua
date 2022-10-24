@@ -1,52 +1,57 @@
 require("src/hud")
 require("src/objects/player")
-require("src/objects/spike")
+require("src/objects/lava")
 require("src/utils")
 
 Game = {}
 
 -- Private
 local wallWidth = .05
+
 local started
+local ended
 local currentLevel
 
 local player
 
+local maxLava = 10
 local wall = {}
-local maxSpikes = 10
+
+local function manageInput()
+	if (not started) then started = true end
+	if (started and not ended) then player:fly() end
+	if (ended) then Game:restart() end
+end
 
 function love.mousepressed(x, y, button, isTouch)
 	if (button == 1 or button == 2) then
-		if (not started) then started = true end
-		player:fly()
+		manageInput()
 	end
 end
 
 function love.keypressed(key)
 	if (key == "space") then
-		if (not started) then started = true end
-		player:fly()
+		manageInput()
 	end
 end
 
 function love.touchpressed()
-	if (not started) then started = true end
-	player:fly()
+	manageInput()
 end
 
 local function resetWall()
-	for i = 0, maxSpikes, 1 do
+	for i = 0, maxLava, 1 do
 		wall[i] = false
 	end
 end
 
-local function createWall(amountSpikes)
+local function createWall(amountLava)
 	resetWall()
-	if(amountSpikes > maxSpikes) then return end
-	local spikes = {}
-	spikes = Utils:generateUniqueRandomIntergers(0, maxSpikes, amountSpikes)
+	if(amountLava > maxLava) then return end
+	local lava = {}
+	lava = Utils:generateUniqueRandomIntergers(0, maxLava, amountLava - 1)
 	print("---")
-	for index, value in pairs(spikes) do
+	for index, value in pairs(lava) do
 		print(value)
 		wall[value] = true
 	end
@@ -54,11 +59,32 @@ end
 
 -- Public
 
+function Game:restart()
+	self:init()
+end
+
+function Game:endGame()
+	ended = true;
+end
+
+function Game:getHasEnded()
+	return ended
+end
+
+function Game:getHasStarted()
+	return started
+end
+
+function Game:getCurrentLevel()
+	return currentLevel
+end
+
+function Game:getPlayer()
+	return player
+end
+
 function Game:updateWall()
-	if (currentLevel == 0) then
-		resetWall()
-	end
-	if (currentLevel > 0 and currentLevel <= 5) then
+	if (currentLevel <= 5) then
 		createWall(2)
 	end
 	if (currentLevel > 5 and currentLevel <= 10) then
@@ -73,10 +99,6 @@ function Game:updateWall()
 	currentLevel = currentLevel + 1
 end
 
-function Game:getPlayer()
-	return player
-end
-
 function Game:getWallWidth()
 	return wallWidth
 end
@@ -86,29 +108,30 @@ function Game:draw()
 	love.graphics.setColor(0, 0, 0, 1)
 	love.graphics.rectangle("fill", (love.graphics.getWidth() * wallWidth), (love.graphics.getHeight() * wallWidth), (love.graphics.getWidth() * (1 - (wallWidth * 2))), (love.graphics.getHeight() * (1 - (wallWidth * 2))), 0)
 	
-	-- Player
-	player:draw()
-	
 	-- Hud
 	Hud:draw()
+	
+	-- Lava
+	Lava:draw(wall)
+	
+	-- Player
+	player:draw()
 end
 
 function Game:update(dt)
+	if (not started or ended) then return end
 	-- Player
-	if(started) then
 		player:update(dt)
-	end
-	
-	-- Hud
-	Hud:update()
 end
 
 function Game:init()
 	print("Initializing Game...")
+	
 	love.graphics.setDefaultFilter("nearest")
 	love.graphics.setBackgroundColor( 255, 255, 255, 1)
 	
 	started = false
+	ended = false
 	currentLevel = 0
 	
 	player = Player:create()

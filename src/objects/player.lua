@@ -86,12 +86,14 @@ function Player:update(dt)
 			self.speed.vertical = self.speed.vertical + (self.weight * dt)
 		end
 	else
+		Game:endGame()
 		local wallWidth = Game:getWallWidth()
 		self.pos.y = ((love.graphics.getHeight() * (1 - wallWidth)) - self.size.tall)
 		self.speed.vertical = 0.0
 	end
 	
 	if(Collision:playerWallTop(self)) then
+		Game:endGame()
 		local wallWidth = Game:getWallWidth()
 		self.pos.y = wallWidth + self.size.tall
 		self.speed.vertical = 0.0
@@ -111,10 +113,8 @@ function Player:create()
 	player.impulse = 500.0
 	centerPlayer(player)
 	
-	-- Cargamos los sprites
 	spriteBirdNormal = love.graphics.newImage("resources/bird_normal.png")
 	spriteBirdFlapping = love.graphics.newImage("resources/bird_flapping.png")
-	print("Sprites loaded!")
 	
 	return player
 end
