@@ -16,13 +16,13 @@ local spriteBirdFlapping = nil
 local function getBeak(player)
 	local beak = {}
 	beak.pos = {}
-	beak.size = { wide = (player.size.wide * .2), tall = (player.size.tall * .5) }
+	beak.size = { wide = (player.size.wide * .2), tall = (player.size.tall * .3) }
 	if (player.speed.horizontal > 0) then
 		beak.pos.x = (player.pos.x + player.size.wide)
 	else
 		beak.pos.x = (player.pos.x - beak.size.wide)
 	end
-	beak.pos.y = (player.pos.y + (beak.size.tall * .5))
+	beak.pos.y = (player.pos.y + (beak.size.tall * 1.35))
 	
 	return beak
 end
@@ -60,7 +60,7 @@ function Player:draw()
 	else
 		love.graphics.draw(spriteBirdNormal, posX, self.pos.y, 0, sizeX, (self.size.tall * .07))
 	end
-
+	
 	--[[
 	-- Collision
 	-- Body
@@ -75,6 +75,8 @@ end
 
 function Player:update(dt)
 	if (Collision:beakWall(getBeak(self))) then
+		if(Collision:beakLava(getBeak(self))) then Game:endGame() return end
+		if(Collision:beakLuckyBlock(getBeak(self))) then Game:addPoints(2) end
 		self.speed.horizontal = -self.speed.horizontal
 		Game:updateWall()
 	end

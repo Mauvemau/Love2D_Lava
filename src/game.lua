@@ -16,6 +16,7 @@ local player
 
 local maxLava = 10
 local wall = {}
+local luckyBlock
 
 local function manageInput()
 	if (not started) then started = true end
@@ -43,6 +44,7 @@ local function resetWall()
 	for i = 0, maxLava, 1 do
 		wall[i] = false
 	end
+	luckyBlock = nil
 end
 
 local function createWall(amountLava)
@@ -55,9 +57,14 @@ local function createWall(amountLava)
 		print(value)
 		wall[value] = true
 	end
+	luckyBlock = Utils:getUniqueInterger(0, maxLava, lava)
 end
 
 -- Public
+
+function Game:addPoints(amount)
+	currentLevel = currentLevel + amount
+end
 
 function Game:restart()
 	self:init()
@@ -77,6 +84,14 @@ end
 
 function Game:getCurrentLevel()
 	return currentLevel
+end
+
+function Game:getLuckyBlock()
+	return luckyBlock
+end
+
+function Game:getWall()
+	return wall
 end
 
 function Game:getPlayer()
@@ -135,6 +150,7 @@ function Game:init()
 	currentLevel = 0
 	
 	player = Player:create()
+	resetWall()
 	
 	Hud:init()
 end
